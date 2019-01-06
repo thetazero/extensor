@@ -1,0 +1,21 @@
+{
+    "name": "Extensor",
+    "version": "1.0",
+    "description": "cmd+k",
+    "content_scripts": [
+        {
+            "js": [
+                "shortcut.js",
+                "page.js"
+            ],
+            "css": [
+                "magic.css"
+            ],
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ]
+        }
+    ],
+    "manifest_version": 2
+}
