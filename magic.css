@@ -9,23 +9,24 @@
     display: none;
     width: 550px;
     z-index: 9001;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 #magic-elem input {
     border: none !important;
-    outline: none;
-    font-size: 26px;
-    width: 100%;
-    text-align: center;
-    background: hsl(var(--theme), 20%, 20%);
-    color: white;
-    padding: 10px 20px;
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    outline: none !important;
+    font-size: 26px !important;
+    width: 100% !important;
+    text-align: center !important;
+    background: hsl(var(--theme), 20%, 20%) !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
     margin: 0px !important;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
 }
 
 #magic-elem input:focus {
@@ -42,6 +43,10 @@
     background: hsl(var(--theme), 10%, 30%);
     font-size: 18px;
     color: #ccc;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    font-weight: normal !important;
 }
 
 .searchterm:hover, .searchterm.psuedo-selected {
