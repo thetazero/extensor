@@ -39,7 +39,6 @@ magicsearch.addEventListener(
     } else {
       selectedindex = 0;
     }
-    psuedoselect();
   },
   true
 );
@@ -237,6 +236,7 @@ function renderoutput() {
     });
     magic_output.appendChild(result);
   });
+  psuedoselect();
 }
 
 function elemMaker(elem, config) {
