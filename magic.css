@@ -17,10 +17,10 @@
     outline: none !important;
     font-size: 26px !important;
     width: 100% !important;
-    text-align: center !important;
+    text-align: left !important;
     background: hsl(var(--theme), 20%, 20%) !important;
     color: white !important;
-    padding: 10px 20px !important;
+    padding: 10px 30px !important;
     font-family: 'Avenir', Helvetica, Arial, sans-serif !important;
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;

@@ -250,3 +250,34 @@ function deleteElement(elementId) {
   element.parentNode.removeChild(element);
 }
 renderoutput();
+//utils for use
+const C = {
+  s(query) {
+    let ret = [];
+    console.log("search");
+    for (let i = 0; i < C.elements.length; i++) {
+      console.log(C.elements[i]);
+      for (key in C.elements[i]) {
+        if (
+          C.elements[i][key]
+            .toString()
+            .toLowerCase()
+            .includes(query.toLowerCase())
+        ) {
+          ret.push(C.elements[i]);
+          break;
+        }
+      }
+      console.log(ret);
+      return ret;
+    }
+  },
+  elements: [
+    {
+      symbol: "H",
+      name: "Hydrogen",
+      molarMass: 1.008,
+      number: 1
+    }
+  ]
+};
