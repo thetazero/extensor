@@ -197,24 +197,47 @@ let searchables = [
   {
     name: "molar mass",
     func(q) {
-      let chunks = [];
-      let cur = "";
-      let molarMass = 0;
-      cur = q[0];
-      for (let i = 1; i < q.length; i++) {
-        if (isNaN(parseInt(q[i])) == isNaN(parseInt(q[i - 1]))) cur += q[i];
-        else {
-          chunks.push(cur);
-          cur = q[i];
+      let tokens = [];
+      let curToken = "";
+      function canToken(token) {
+        if (isNumber(token)) return true;
+        if (elements[token]) return true;
+        return false;
+      }
+      function isNumber(str) {
+        return /^\d+$/.test(str);
+      }
+      for (let i = 0; i < q.length; i++) {
+        curToken += q[i];
+        if (!canToken(curToken + q[i + 1])) {
+          if (
+            !(curToken == ")") &&
+            !(curToken == "(") &&
+            !elements[curToken] &&
+            !isNumber(curToken)
+          )
+            return `the element ${curToken} does not exist`;
+          tokens.push(curToken);
+          curToken = "";
         }
       }
-      if (cur.length > 0) chunks.push(cur);
-      for (let i = 0; i < chunks.length; i += 2) {
-        console.log(elements[chunks[i]]);
-        molarMass += elements[chunks[i]].molarMass * chunks[i + 1];
+      let pTokens = [];
+      let opened = true;
+      for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i] == "(") opened = true;
+        else if (tokens[i] == ")") opened = false;
+        else {
+          pTokens.push(tokens[i]);
+          if (!isNumber(tokens[i + 1]) && !isNumber(tokens[i])) {
+            pTokens.push(1);
+          }
+        }
       }
-      console.log(chunks);
-      return `${molarMass}`;
+      let molarMass = 0;
+      for (let i = 0; i < pTokens.length; i += 2) {
+        molarMass += elements[pTokens[i]].molarMass * pTokens[i + 1];
+      }
+      return molarMass;
     },
     modeSwap: true
   },
@@ -382,8 +405,29 @@ const elements = {
     molarMass: 30.974,
     name: "phosphorus",
     number: 15
-  }, //out of orders
+  },
+  s: {
+    molarMass: 32.06,
+    name: "sulfur",
+    number: 16
+  },
+  cl: {
+    molarMass: 35.45,
+    name: "chlorine",
+    number: 17
+  },
+  ar: {
+    molarMass: 39.948,
+    name: "argon",
+    number: 18
+  },
+  k: {
+    molarMass: 39.098,
+    name: "potasium",
+    number: 19
+  },
   fe: {
+    //out of orders
     molarMass: 55.845,
     name: "iron",
     number: 26
