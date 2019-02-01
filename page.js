@@ -239,14 +239,14 @@ let searchables = [
       }
       return Math.round(molarMass * 1000) / 1000;
     },
-    modeSwap: true
+    isProcessor: true
   },
   {
     name: "js mode",
     func() {
       mode = 0;
     },
-    modeSwap: true
+    isProcessor: true
   },
   {
     name: "spoiler discord",
@@ -256,7 +256,7 @@ let searchables = [
         .map(a => `||${a}||`)
         .join("");
     },
-    modeSwap: true
+    isProcessor: true
   }
 ];
 searchables.sort((a, b) => {
@@ -313,10 +313,11 @@ function renderoutput() {
         document.body.removeChild(el);
         magicsearch.focus();
         magicsearch.value = null;
+        renderoutput();
       });
     } else
       result.addEventListener("click", e => {
-        if (elem.modeSwap) {
+        if (elem.isProcessor) {
           mode = elem.id;
           magicsearch.value = null;
         } else open();
