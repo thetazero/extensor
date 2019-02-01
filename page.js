@@ -289,7 +289,7 @@ function renderoutput() {
     found++;
     outputs.push(searchables[0]);
   }
-  while (found < 5 && i < searchables.length) {
+  while (found < 5 && i < searchables.length && mode == 0) {
     if (superiorSearch(searchables[i].name, q)) {
       outputs.push(searchables[i]);
       found++;
