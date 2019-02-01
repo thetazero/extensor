@@ -263,6 +263,34 @@ let searchables = [
         .join("");
     },
     isProcessor: true
+  },
+  {
+    name: "fibonaci encoder",
+    func(q) {
+      let ret = "";
+      let small = 1;
+      let big = 1;
+      for (let i = 0; i < q.length; i++) {
+        [small, big] = [big, small + big];
+        ret += shiftLetter(q[i], small);
+      }
+      return ret;
+    },
+    isProcessor: true
+  },
+  {
+    name: "fibonaci decoder",
+    func(q) {
+      let ret = "";
+      let small = 1;
+      let big = 1;
+      for (let i = 0; i < q.length; i++) {
+        [small, big] = [big, small + big];
+        ret += shiftLetter(q[i], -small);
+      }
+      return ret;
+    },
+    isProcessor: true
   }
 ];
 searchables.sort((a, b) => {
@@ -347,6 +375,10 @@ function deleteElement(elementId) {
 }
 renderoutput();
 //utils for use
+function shiftLetter(letter, num) {
+  let trueNum = num % 50;
+  return String.fromCharCode(letter.charCodeAt() + trueNum);
+}
 const elements = {
   h: {
     molarMass: 1.008,
