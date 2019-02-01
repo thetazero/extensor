@@ -216,7 +216,7 @@ let searchables = [
             !elements[curToken] &&
             !isNumber(curToken)
           )
-            return `the element ${curToken} does not exist`;
+            return null;
           tokens.push(curToken);
           curToken = "";
         }
@@ -237,7 +237,7 @@ let searchables = [
       for (let i = 0; i < pTokens.length; i += 2) {
         molarMass += elements[pTokens[i]].molarMass * pTokens[i + 1];
       }
-      return molarMass;
+      return Math.round(molarMass * 1000) / 1000;
     },
     modeSwap: true
   },
@@ -245,6 +245,16 @@ let searchables = [
     name: "js mode",
     func() {
       mode = 0;
+    },
+    modeSwap: true
+  },
+  {
+    name: "spoiler discord",
+    func(thing) {
+      return thing
+        .split("")
+        .map(a => `||${a}||`)
+        .join("");
     },
     modeSwap: true
   }
