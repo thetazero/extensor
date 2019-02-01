@@ -30,19 +30,25 @@ magicsearch.addEventListener(
   "keyup",
   e => {
     renderoutput();
-    if (e.key == "ArrowDown") {
-      selectedindex++;
-    } else if (e.key == "ArrowUp") {
-      selectedindex--;
-    } else if (e.key == "Enter") {
+    if (e.key == "Enter") {
       if (window.getComputedStyle(selectedElem).display == "block")
         selectedElem.click();
-    } else {
-      selectedindex = 0;
     }
   },
   true
 );
+magicsearch.addEventListener("keydown", e => {
+  if (e.key == "ArrowDown") {
+    selectedindex++;
+    e.preventDefault();
+  } else if (e.key == "ArrowUp") {
+    selectedindex--;
+    e.preventDefault();
+  } else {
+    selectedindex = 0;
+  }
+  renderoutput();
+});
 function psuedoselect() {
   let terms = document.getElementsByClassName("searchterm");
   if (selectedindex < 0) selectedindex = 0;
