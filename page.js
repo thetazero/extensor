@@ -44,8 +44,6 @@ magicsearch.addEventListener("keydown", e => {
   } else if (e.key == "ArrowUp") {
     selectedindex--;
     e.preventDefault();
-  } else {
-    selectedindex = 0;
   }
   renderoutput();
 });
@@ -59,6 +57,7 @@ function psuedoselect() {
       selectedElem = terms[i];
     } else terms[i].classList.remove("psuedo-selected");
   }
+  console.log(selectedElem);
 }
 function open() {
   mode = 0;
@@ -291,6 +290,13 @@ let searchables = [
       return ret;
     },
     isProcessor: true
+  },
+  {
+    name: "google",
+    func(q) {
+      return `https://google.com/q?=${q}`;
+    },
+    isProcessor: true
   }
 ];
 searchables.sort((a, b) => {
@@ -323,7 +329,7 @@ function renderoutput() {
     found++;
     outputs.push(searchables[0]);
   }
-  while (found < 5 && i < searchables.length && mode == 0) {
+  while (found < 5 && i < searchables.length) {
     if (superiorSearch(searchables[i].name, q)) {
       outputs.push(searchables[i]);
       found++;
@@ -338,19 +344,13 @@ function renderoutput() {
     result.innerText = elem.name;
     if (elem.id == 0) {
       result.addEventListener("click", e => {
-        const el = elemMaker("textarea", {
-          value: result.innerText
-        });
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand("copy");
-        document.body.removeChild(el);
-        magicsearch.focus();
-        magicsearch.value = null;
+        console.log(elem);
+        copyToClipBoard(result.innerText);
         renderoutput();
       });
     } else
       result.addEventListener("click", e => {
+        console.log(elem);
         if (elem.isProcessor) {
           mode = elem.id;
           magicsearch.value = null;
@@ -361,6 +361,18 @@ function renderoutput() {
   });
   selectedElem = null;
   psuedoselect();
+}
+
+function copyToClipBoard(text) {
+  const el = elemMaker("textarea", {
+    value: text
+  });
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+  magicsearch.focus();
+  magicsearch.value = null;
 }
 
 function elemMaker(elem, config) {
