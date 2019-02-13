@@ -36,13 +36,19 @@
 .searchterm {
     padding: 10px 20px;
     text-align: left;
+    font-size: 18px !important;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    font-weight: normal !important;
+    line-height: 25px !important;
 }
 
 .searchbox {
-    width: 100%;
+    width: 100% !important;
     background: hsl(var(--theme), 10%, 30%);
-    font-size: 18px;
-    color: #ccc;
+    font-size: 18px !important;
+    color: #ccc !important;
     font-family: 'Avenir', Helvetica, Arial, sans-serif !important;
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
@@ -53,5 +59,5 @@
     background: hsl(var(--theme), 10%, 25%);
     cursor: pointer;
     padding: 10px 20px;
-    color: #ccc;
+    color: #ccc !important;
 }

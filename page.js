@@ -3,6 +3,7 @@ let selectedindex = -1;
 let selectedElem;
 let outputs;
 let mode = 0;
+let isProcessor = true;
 //initializing elements
 const magicelem = elemMaker("div", {
   id: "magic-elem",
@@ -23,8 +24,11 @@ shortcut.add(
   "Meta+J",
   () => {
     open();
-  },
-  { type: "keydown", propagate: true, target: document }
+  }, {
+    type: "keydown",
+    propagate: true,
+    target: document
+  }
 );
 magicsearch.addEventListener(
   "keyup",
@@ -47,6 +51,7 @@ magicsearch.addEventListener("keydown", e => {
   }
   renderoutput();
 });
+
 function psuedoselect() {
   let terms = document.getElementsByClassName("searchterm");
   if (selectedindex < 0) selectedindex = 0;
@@ -57,11 +62,12 @@ function psuedoselect() {
       selectedElem = terms[i];
     } else terms[i].classList.remove("psuedo-selected");
   }
-  console.log(selectedElem);
+  // console.log(selectedElem);
 }
-function open() {
+
+function open(openIt) {
   mode = 0;
-  opened = !opened;
+  opened = openIt == undefined ? !opened : openIt;
   if (opened) {
     magicelem.style.display = "block";
     magicsearch.focus();
@@ -71,9 +77,13 @@ function open() {
     magicsearch.value = "";
     renderoutput();
   }
+  console.log(!(openIt == undefined), openIt)
+  if (openIt == undefined) channel.postMessage({
+    type: "open",
+    val: opened
+  })
 }
-let searchables = [
-  {
+let searchables = [{
     name: "",
     func: q => {
       let ret = eval(`${q}`);
@@ -125,65 +135,6 @@ let searchables = [
     }
   },
   {
-    name: "dark theme",
-    func() {
-      console.log("night");
-      function rgbToHsl(r, g, b) {
-        (r /= 255), (g /= 255), (b /= 255);
-        var max = Math.max(r, g, b),
-          min = Math.min(r, g, b);
-        var h,
-          s,
-          l = (max + min) / 2;
-
-        if (max == min) {
-          h = s = 0; // achromatic
-        } else {
-          var d = max - min;
-          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-          switch (max) {
-            case r:
-              h = (g - b) / d + (g < b ? 6 : 0);
-              break;
-            case g:
-              h = (b - r) / d + 2;
-              break;
-            case b:
-              h = (r - g) / d + 4;
-              break;
-          }
-          h /= 6;
-        }
-
-        return [h, s, l];
-      }
-      function backgroundColor(input) {
-        let hsl = rgbToHsl(input[0], input[1], input[2]);
-        return `hsl(${hsl[0]},${hsl[1] * 100}%,${100 - hsl[2] * 100}%)`;
-      }
-      let elems = document.getElementsByTagName("*");
-      for (let i = 0; i < elems.length; i++) {
-        let styles = window.getComputedStyle(elems[i]);
-        console.log(
-          styles.backgroundColor
-            .split("(")[1]
-            .slice(0, -1)
-            .replace(/ /g, "")
-            .split(",")
-        );
-        let newBackgroundColor = backgroundColor(
-          styles.backgroundColor
-            .split("(")[1]
-            .slice(0, -1)
-            .replace(/ /g, "")
-            .split(",")
-        );
-        console.log(newBackgroundColor);
-        elems[i].style.backgroundColor = newBackgroundColor;
-      }
-    }
-  },
-  {
     name: "toggle blur",
     func() {
       if (document.getElementById("magic-blur-style"))
@@ -204,11 +155,13 @@ let searchables = [
     func(q) {
       let tokens = [];
       let curToken = "";
+
       function canToken(token) {
         if (isNumber(token)) return true;
         if (elements[token]) return true;
         return false;
       }
+
       function isNumber(str) {
         return /^\d+$/.test(str);
       }
@@ -244,14 +197,14 @@ let searchables = [
       }
       return Math.round(molarMass * 1000) / 1000;
     },
-    isProcessor: true
+    isProcessor
   },
   {
     name: "js mode",
     func() {
       mode = 0;
     },
-    isProcessor: true
+    isProcessor
   },
   {
     name: "spoiler discord",
@@ -261,7 +214,7 @@ let searchables = [
         .map(a => `||${a}||`)
         .join("");
     },
-    isProcessor: true
+    isProcessor
   },
   {
     name: "fibonaci encoder",
@@ -275,7 +228,7 @@ let searchables = [
       }
       return ret;
     },
-    isProcessor: true
+    isProcessor
   },
   {
     name: "fibonaci decoder",
@@ -289,14 +242,37 @@ let searchables = [
       }
       return ret;
     },
-    isProcessor: true
+    isProcessor
+  },
+  {
+    name: "scream",
+    func(q) {
+      return q
+        .split("")
+        .map(e => {
+          return Math.random() > 0.5 ? e : e.toUpperCase();
+        })
+        .join("");
+    },
+    isProcessor
+  },
+  {
+    name: "to lower case",
+    func(q) {
+      return q.toLowerCase();
+    },
+    isProcessor
   },
   {
     name: "google",
     func(q) {
-      return `https://google.com/q?=${q}`;
+      return `https://google.com/search?q=${q}`;
     },
-    isProcessor: true
+    custom(q) {
+      console.log(`https://google.com/search?q=${q}`);
+      window.location = `https://google.com/search?q=${q}`;
+    },
+    isProcessor
   }
 ];
 searchables.sort((a, b) => {
@@ -305,6 +281,7 @@ searchables.sort((a, b) => {
 searchables.map((e, i) => {
   searchables[i].id = i;
 });
+
 function superiorSearch(searched, query) {
   let queryIrl = query.split("");
   for (let i = 0; i < searched.length && queryIrl.length > 0; i++) {
@@ -314,10 +291,11 @@ function superiorSearch(searched, query) {
   }
   return queryIrl.length == 0;
 }
+
 function renderoutput() {
   let q = magicsearch.value;
   try {
-    console.log(mode);
+    // console.log(mode);
     searchables[0].name = searchables[mode].func(q);
   } catch (e) {
     searchables[0].name = "";
@@ -344,8 +322,9 @@ function renderoutput() {
     result.innerText = elem.name;
     if (elem.id == 0) {
       result.addEventListener("click", e => {
-        console.log(elem);
-        copyToClipBoard(result.innerText);
+        console.log(elem, mode);
+        if (searchables[mode].custom) searchables[mode].custom(q);
+        else copyToClipBoard(result.innerText);
         renderoutput();
       });
     } else
@@ -487,8 +466,18 @@ const elements = {
     name: "potasium",
     number: 19
   },
+  ca: {
+    molarMass: 40.078,
+    name: "calcium",
+    number: 20
+  },
+  //out of orders
+  cu: {
+    molarMass: 63.546,
+    name: "copper",
+    number: 29
+  },
   fe: {
-    //out of orders
     molarMass: 55.845,
     name: "iron",
     number: 26
