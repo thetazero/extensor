@@ -274,12 +274,12 @@ let searchables = [{
   }, {
     name(q) {
       for (let i = 0; i < bookmarks.length; i++) {
-        if (superiorSearch((bookmarks[i].title.toLowerCase()), q)) return bookmarks[i].title
+        if (bookmarks[i].title.toLowerCase().includes(q)) return bookmarks[i].title
       }
     },
     func(q) {
       for (let i = 0; i < bookmarks.length; i++) {
-        if (superiorSearch((bookmarks[i].title.toLowerCase()), q)) window.location = bookmarks[i].url
+        if (bookmarks[i].title.toLowerCase().includes(q)) window.location = bookmarks[i].url
       }
     }
   }
