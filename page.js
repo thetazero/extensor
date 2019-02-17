@@ -331,7 +331,6 @@ function renderoutput() {
     let result = document.createElement("div");
     result.classList.add("searchterm");
     result.classList.add("magicthingy");
-    console.log(typeof elem.name);
     result.innerText =
       typeof elem.name == "function" ? elem.name(q) : elem.name;
     if (elem.id == 0) {
@@ -346,6 +345,7 @@ function renderoutput() {
         console.log(elem);
         if (elem.isProcessor) {
           mode = elem.id;
+          selectedindex = 0;
           magicsearch.value = null;
         } else open();
         elem.func(q);
