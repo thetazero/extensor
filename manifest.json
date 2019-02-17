@@ -2,6 +2,13 @@
     "name": "Extensor",
     "version": "1.0",
     "description": "cmd+k",
+    "permissions": [
+        "bookmarks"
+    ],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": true
+    },
     "content_scripts": [{
         "js": [
             "shortcut.js",

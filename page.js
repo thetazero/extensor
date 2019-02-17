@@ -24,8 +24,7 @@ shortcut.add(
   "Meta+J",
   () => {
     open();
-  },
-  {
+  }, {
     type: "keydown",
     propagate: true,
     target: document
@@ -85,8 +84,7 @@ function open(openIt) {
       val: opened
     });
 }
-let searchables = [
-  {
+let searchables = [{
     name: "",
     func: q => {
       let ret = eval(`${q}`);
@@ -273,6 +271,17 @@ let searchables = [
     func(q) {
       window.location = `https://google.com/search?q=${q}`;
     }
+  }, {
+    name(q) {
+      for (let i = 0; i < bookmarks.length; i++) {
+        if (superiorSearch((bookmarks[i].title.toLowerCase()), q)) return bookmarks[i].title
+      }
+    },
+    func(q) {
+      for (let i = 0; i < bookmarks.length; i++) {
+        if (superiorSearch((bookmarks[i].title.toLowerCase()), q)) window.location = bookmarks[i].url
+      }
+    }
   }
 ];
 searchables.sort((a, b) => {
@@ -310,7 +319,7 @@ function renderoutput() {
   while (found < 5 && i < searchables.length) {
     if (
       superiorSearch(searchables[i].name, q) ||
-      typeof searchables[i].name == "function"
+      (typeof searchables[i].name == "function" && searchables[i].name(q))
     ) {
       outputs.push(searchables[i]);
       found++;
