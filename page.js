@@ -24,7 +24,8 @@ shortcut.add(
   "Meta+J",
   () => {
     open();
-  }, {
+  },
+  {
     type: "keydown",
     propagate: true,
     target: document
@@ -77,13 +78,15 @@ function open(openIt) {
     magicsearch.value = "";
     renderoutput();
   }
-  console.log(!(openIt == undefined), openIt)
-  if (openIt == undefined) channel.postMessage({
-    type: "open",
-    val: opened
-  })
+  console.log(!(openIt == undefined), openIt);
+  if (openIt == undefined)
+    channel.postMessage({
+      type: "open",
+      val: opened
+    });
 }
-let searchables = [{
+let searchables = [
+  {
     name: "",
     func: q => {
       let ret = eval(`${q}`);
@@ -264,15 +267,12 @@ let searchables = [{
     isProcessor
   },
   {
-    name: "google",
-    func(q) {
+    name(q) {
       return `https://google.com/search?q=${q}`;
     },
-    custom(q) {
-      console.log(`https://google.com/search?q=${q}`);
+    func(q) {
       window.location = `https://google.com/search?q=${q}`;
-    },
-    isProcessor
+    }
   }
 ];
 searchables.sort((a, b) => {
@@ -308,7 +308,10 @@ function renderoutput() {
     outputs.push(searchables[0]);
   }
   while (found < 5 && i < searchables.length) {
-    if (superiorSearch(searchables[i].name, q)) {
+    if (
+      superiorSearch(searchables[i].name, q) ||
+      typeof searchables[i].name == "function"
+    ) {
       outputs.push(searchables[i]);
       found++;
     }
@@ -319,7 +322,9 @@ function renderoutput() {
     let result = document.createElement("div");
     result.classList.add("searchterm");
     result.classList.add("magicthingy");
-    result.innerText = elem.name;
+    console.log(typeof elem.name);
+    result.innerText =
+      typeof elem.name == "function" ? elem.name(q) : elem.name;
     if (elem.id == 0) {
       result.addEventListener("click", e => {
         console.log(elem, mode);
@@ -334,7 +339,7 @@ function renderoutput() {
           mode = elem.id;
           magicsearch.value = null;
         } else open();
-        elem.func();
+        elem.func(q);
       });
     magic_output.appendChild(result);
   });
