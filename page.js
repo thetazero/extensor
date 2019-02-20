@@ -273,18 +273,41 @@ let searchables = [{
     }
   }, {
     name(q) {
-      for (let i = 0; i < bookmarks.length; i++) {
-        if (bookmarks[i].title.toLowerCase().includes(q)) return bookmarks[i].title
-      }
+      let res = findBookmark(q, 0)
+      console.log(res)
+      return res ? res.title : null;
     },
     func(q) {
-      for (let i = 0; i < bookmarks.length; i++) {
-        if (bookmarks[i].title.toLowerCase().includes(q)) window.location = bookmarks[i].url
-      }
+      window.location = findBookmark(q, 0).url;
+    }
+  }, {
+    name(q) {
+      let res = findBookmark(q, 1)
+      return res ? res.title : null;
+    },
+    func(q) {
+      window.location = findBookmark(q, 1).url;
+    }
+  }, {
+    name(q) {
+      let res = findBookmark(q, 2)
+      return res ? res.title : null;
+    },
+    func(q) {
+      window.location = findBookmark(q, 2).url;
+    }
+  }, {
+    name: "new tab",
+    func() {
+      chrome.runtime.sendMessage({
+        key: "newtab"
+      })
     }
   }
 ];
 searchables.sort((a, b) => {
+  if (typeof a == "function") return 0.5;
+  if (typeof b == "function") return -0.5;
   return +(a.name > b.name) - 0.5;
 });
 searchables.map((e, i) => {
@@ -497,3 +520,14 @@ const elements = {
     number: 26
   }
 };
+
+function findBookmark(q, index) {
+  let found = 0;
+  for (let i = 0; i < bookmarks.length; i++) {
+    if (bookmarks[i].title.toLowerCase().includes(q.toLowerCase())) {
+      // console.log(found, index)
+      if (found == index) return bookmarks[i]
+      found++;
+    }
+  }
+}
