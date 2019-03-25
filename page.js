@@ -271,43 +271,120 @@ let searchables = [{
     func(q) {
       window.location = `https://google.com/search?q=${q}`;
     }
-  }, {
+  },
+  {
     name(q) {
-      let res = findBookmark(q, 0)
-      console.log(res)
+      let res = findBookmark(q, 0);
       return res ? res.title : null;
     },
     func(q) {
       window.location = findBookmark(q, 0).url;
     }
-  }, {
+  },
+  {
     name(q) {
-      let res = findBookmark(q, 1)
+      let res = findBookmark(q, 1);
       return res ? res.title : null;
     },
     func(q) {
       window.location = findBookmark(q, 1).url;
     }
-  }, {
+  },
+  {
     name(q) {
-      let res = findBookmark(q, 2)
+      let res = findBookmark(q, 2);
       return res ? res.title : null;
     },
     func(q) {
       window.location = findBookmark(q, 2).url;
     }
-  }, {
+  },
+  {
     name: "new tab",
     func() {
       chrome.runtime.sendMessage({
         key: "newtab"
-      })
+      });
     }
+  },
+  {
+    name(q) {
+      try {
+        x = tempConvert[q[0] + q[q.length - 1]](q.slice(1, q.length - 1));
+        return `${x}${q[q.length - 1]} from ${q[0]}`;
+      } catch (e) {
+        return false;
+      }
+    },
+    func(q) {
+      x = tempConvert[q[0] + q[q.length - 1]](q.slice(1, q.length - 1));
+      copyToClipBoard(x);
+      open();
+    }
+  },
+  {
+    name: "kill sticky",
+    func() {
+      let elements = document.querySelectorAll("body *");
+      for (let i = 0; i < elements.length; i++) {
+        if (getComputedStyle(elements[i]).position === "fixed") {
+          elements[i].parentNode.removeChild(elements[i]);
+        }
+      }
+    }
+  },
+  {
+    name(query) {
+      let q = query.split(".")[0]
+      let q2 = query.split(".")[1]
+      let found = findElements(q)
+      if (!found) return false;
+      if (found[0][q2]) {
+        return found[0][q2]
+      } else return JSON.stringify(found[0])
+    },
+    func(query) {
+      let q = query.split(".")[0]
+      let q2 = query.split(".")[1]
+      let found = findElements(q)
+      if (found[0][q2]) copyToClipBoard(found[0][q2]);
+      else copyToClipBoard(found[0]);
+      open();
+    }
+  },
+  {
+    name: "wëird letters",
+    func(thing) {
+      let ret = "";
+      let converter = {
+        a: "àáâäãåā",
+        c: "çćč",
+        e: "èéêëēėę",
+        i: "îïíīįì",
+        l: "ł",
+        n: "ñń",
+        o: "ôöòóøōõ",
+        s: "śš",
+        u: "ûüùúū",
+        y: "ÿ",
+        z: "žźż"
+      }
+      for (let i = 0; i < thing.length; i++) {
+        let tempkey = converter[thing[i].toLowerCase()]
+        if (tempkey) {
+          if (thing[i].toLowerCase() == thing[i])
+            ret += tempkey[Math.floor(Math.random() * tempkey.length)];
+          else ret += tempkey[Math.floor(Math.random() * tempkey.length)].toUpperCase();
+        } else ret += thing[i];
+      }
+      return ret;
+    },
+    isProcessor
   }
 ];
 searchables.sort((a, b) => {
-  if (typeof a == "function") return 0.5;
-  if (typeof b == "function") return -0.5;
+  if (typeof a.name == "function") return 0.5;
+  if (typeof b.name == "function") return -0.5;
   return +(a.name > b.name) - 0.5;
 });
 searchables.map((e, i) => {
@@ -340,12 +417,16 @@ function renderoutput() {
     outputs.push(searchables[0]);
   }
   while (found < 5 && i < searchables.length) {
-    if (
-      superiorSearch(searchables[i].name, q) ||
-      (typeof searchables[i].name == "function" && searchables[i].name(q))
-    ) {
-      outputs.push(searchables[i]);
-      found++;
+    try {
+      if (
+        superiorSearch(searchables[i].name, q) ||
+        (typeof searchables[i].name == "function" && searchables[i].name(q))
+      ) {
+        outputs.push(searchables[i]);
+        found++;
+      }
+    } catch (e) {
+
     }
     i++;
   }
@@ -403,131 +484,3 @@ function deleteElement(elementId) {
 }
 renderoutput();
 //utils for use
-function shiftLetter(letter, num) {
-  let trueNum = num % 50;
-  return String.fromCharCode(letter.charCodeAt() + trueNum);
-}
-const elements = {
-  h: {
-    molarMass: 1.008,
-    name: "hydrogen",
-    number: 1
-  },
-  he: {
-    molarMass: 4.003,
-    name: "helium",
-    number: 2
-  },
-  li: {
-    molarMass: 6.94,
-    name: "lithium",
-    number: 3
-  },
-  be: {
-    molarMass: 9.012,
-    name: "beryllium",
-    number: 4
-  },
-  b: {
-    molarMass: 10.81,
-    name: "boron",
-    number: 5
-  },
-  c: {
-    molarMass: 12.011,
-    name: "carbon",
-    number: 6
-  },
-  n: {
-    molarMass: 14.007,
-    name: "nitrogen",
-    number: 7
-  },
-  o: {
-    molarMass: 15.999,
-    name: "oxygen",
-    number: 8
-  },
-  f: {
-    molarMass: 18.998,
-    name: "fluorine",
-    number: 9
-  },
-  ne: {
-    molarMass: 20.18,
-    name: "neon",
-    number: 10
-  },
-  na: {
-    molarMass: 22.99,
-    name: "sodium",
-    number: 11
-  },
-  mg: {
-    molarMass: 24.305,
-    name: "magnesium",
-    number: 12
-  },
-  al: {
-    molarMass: 26.982,
-    name: "aluminium",
-    number: 13
-  },
-  si: {
-    molarMass: 28.085,
-    name: "silicon",
-    number: 14
-  },
-  p: {
-    molarMass: 30.974,
-    name: "phosphorus",
-    number: 15
-  },
-  s: {
-    molarMass: 32.06,
-    name: "sulfur",
-    number: 16
-  },
-  cl: {
-    molarMass: 35.45,
-    name: "chlorine",
-    number: 17
-  },
-  ar: {
-    molarMass: 39.948,
-    name: "argon",
-    number: 18
-  },
-  k: {
-    molarMass: 39.098,
-    name: "potasium",
-    number: 19
-  },
-  ca: {
-    molarMass: 40.078,
-    name: "calcium",
-    number: 20
-  },
-  //out of orders
-  cu: {
-    molarMass: 63.546,
-    name: "copper",
-    number: 29
-  },
-  fe: {
-    molarMass: 55.845,
-    name: "iron",
-    number: 26
-  }
-};
-
-function findBookmark(q, index) {
-  let found = 0;
-  for (let i = 0; i < bookmarks.length; i++) {
-    if (bookmarks[i].title.toLowerCase().includes(q.toLowerCase())) {
-      // console.log(found, index)
-      if (found == index) return bookmarks[i]
-      found++;
-    }
-  }
-}

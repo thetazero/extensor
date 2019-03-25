@@ -13,7 +13,8 @@
         "js": [
             "shortcut.js",
             "page.js",
-            "sync.js"
+            "sync.js",
+            "utils.js"
         ],
         "css": [
             "magic.css"
