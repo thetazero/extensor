@@ -1,6 +1,6 @@
 # extensor
 
-Bring up a command palate through the pressingj of Meta+J or J+Meta.
+Bring up a command palatte through the pressingj of Meta+J or J+Meta.
 
 [How to load this extension](https://developer.chrome.com/extensions/getstarted)
 
