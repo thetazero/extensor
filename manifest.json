@@ -12,6 +12,7 @@
     "content_scripts": [{
         "js": [
             "shortcut.js",
+            "PeriodicTableJSON.js",
             "page.js",
             "sync.js",
             "utils.js"

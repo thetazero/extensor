@@ -25,10 +25,10 @@ shortcut.add(
   () => {
     open();
   }, {
-    type: 'keydown',
-    propagate: true,
-    target: document
-  }
+  type: 'keydown',
+  propagate: true,
+  target: document
+}
 );
 magicsearch.addEventListener(
   'keyup',
@@ -154,49 +154,7 @@ let searchables = [{
 {
   name: 'molar mass',
   func(q) {
-    let tokens = [];
-    let curToken = '';
-
-    function canToken(token) {
-      if (isNumber(token)) return true;
-      if (elements[token]) return true;
-      return false;
-    }
-
-    function isNumber(str) {
-      return /^\d+$/.test(str);
-    }
-    for (let i = 0; i < q.length; i++) {
-      curToken += q[i];
-      if (!canToken(curToken + q[i + 1])) {
-        if (
-          !(curToken == ')') &&
-          !(curToken == '(') &&
-          !elements[curToken] &&
-          !isNumber(curToken)
-        )
-          return null;
-        tokens.push(curToken);
-        curToken = '';
-      }
-    }
-    let pTokens = [];
-    let opened = true;
-    for (let i = 0; i < tokens.length; i++) {
-      if (tokens[i] == '(') opened = true;
-      else if (tokens[i] == ')') opened = false;
-      else {
-        pTokens.push(tokens[i]);
-        if (!isNumber(tokens[i + 1]) && !isNumber(tokens[i])) {
-          pTokens.push(1);
-        }
-      }
-    }
-    let molarMass = 0;
-    for (let i = 0; i < pTokens.length; i += 2) {
-      molarMass += elements[pTokens[i]].molarMass * pTokens[i + 1];
-    }
-    return Math.round(molarMass * 1000) / 1000;
+    return mm(q)
   },
   isProcessor
 },
@@ -380,7 +338,31 @@ let searchables = [{
     return ret;
   },
   isProcessor
+},
+{
+  name: '...',
+  func(thing) {
+    return thing.replace(/ /g, '.').split('').join('.')
+  },
+  isProcessor
 }, {
+  name: '2swap3',
+  func(thing) {
+    return thing.split(' ').map(e => {
+      if (e.length >= 4) return e[0] + e[2] + e[1] + e.slice(3)
+      return e
+    }).join(' ')
+  },
+  isProcessor
+},
+{
+  name: 'spaces',
+  func(thing) {
+    return thing.replace(/ /g, '').split('').join(' ')
+  },
+  isProcessor
+},
+{
   name: 'keymash',
   func(q) {
     let lenreal = parseInt(q)
@@ -454,6 +436,7 @@ function renderoutput() {
     if (elem.id == 0) {
       result.addEventListener('click', e => {
         console.log(elem, mode);
+        mode = 0
         if (searchables[mode].custom) searchables[mode].custom(q);
         else copyToClipBoard(result.innerText);
         renderoutput();

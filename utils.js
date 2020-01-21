@@ -16,129 +16,6 @@ let tempConvert = {
     return parseFloat(e) - 273.15;
   }
 };
-const elements = {
-  h: {
-    molarMass: 1.008,
-    name: "hydrogen",
-    number: 1
-  },
-  he: {
-    molarMass: 4.003,
-    name: "helium",
-    number: 2
-  },
-  li: {
-    molarMass: 6.94,
-    name: "lithium",
-    number: 3
-  },
-  be: {
-    molarMass: 9.012,
-    name: "beryllium",
-    number: 4
-  },
-  b: {
-    molarMass: 10.81,
-    name: "boron",
-    number: 5
-  },
-  c: {
-    molarMass: 12.011,
-    name: "carbon",
-    number: 6
-  },
-  n: {
-    molarMass: 14.007,
-    name: "nitrogen",
-    number: 7
-  },
-  o: {
-    molarMass: 15.999,
-    name: "oxygen",
-    number: 8
-  },
-  f: {
-    molarMass: 18.998,
-    name: "fluorine",
-    number: 9
-  },
-  ne: {
-    molarMass: 20.18,
-    name: "neon",
-    number: 10
-  },
-  na: {
-    molarMass: 22.99,
-    name: "sodium",
-    number: 11
-  },
-  mg: {
-    molarMass: 24.305,
-    name: "magnesium",
-    number: 12
-  },
-  al: {
-    molarMass: 26.982,
-    name: "aluminium",
-    number: 13
-  },
-  si: {
-    molarMass: 28.085,
-    name: "silicon",
-    number: 14
-  },
-  p: {
-    molarMass: 30.974,
-    name: "phosphorus",
-    number: 15
-  },
-  s: {
-    molarMass: 32.06,
-    name: "sulfur",
-    number: 16
-  },
-  cl: {
-    molarMass: 35.45,
-    name: "chlorine",
-    number: 17
-  },
-  ar: {
-    molarMass: 39.948,
-    name: "argon",
-    number: 18
-  },
-  k: {
-    molarMass: 39.098,
-    name: "potasium",
-    number: 19
-  },
-  ca: {
-    molarMass: 40.078,
-    name: "calcium",
-    number: 20
-  },
-  //out of orders
-  cu: {
-    molarMass: 63.546,
-    name: "copper",
-    number: 29
-  },
-  fe: {
-    molarMass: 55.845,
-    name: "iron",
-    number: 26
-  },
-  ag: {
-    molarMass: 107.87,
-    name: "silver",
-    number: 47
-  },
-  rn: {
-    molarMass: 222,
-    name: "radon",
-    number: 86
-  }
-};
 
 function findBookmark(q, index) {
   let found = 0;
@@ -163,5 +40,52 @@ function findElements(query) {
       }
     }
   }
+  consolelog(found)
   return found;
+}
+
+function mm(q) {
+  let tokens = [];
+  let curToken = '';
+
+  function canToken(token) {
+    if (isNumber(token)) return true;
+    if (elements[token]) return true;
+    return false;
+  }
+
+  function isNumber(str) {
+    return /^\d+$/.test(str);
+  }
+  for (let i = 0; i < q.length; i++) {
+    curToken += q[i];
+    if (!canToken(curToken + q[i + 1])) {
+      if (
+        !(curToken == ')') &&
+        !(curToken == '(') &&
+        !elements[curToken] &&
+        !isNumber(curToken)
+      )
+        return null;
+      tokens.push(curToken);
+      curToken = '';
+    }
+  }
+  let pTokens = [];
+  let opened = true;
+  for (let i = 0; i < tokens.length; i++) {
+    if (tokens[i] == '(') opened = true;
+    else if (tokens[i] == ')') opened = false;
+    else {
+      pTokens.push(tokens[i]);
+      if (!isNumber(tokens[i + 1]) && !isNumber(tokens[i])) {
+        pTokens.push(1);
+      }
+    }
+  }
+  let molarMass = 0;
+  for (let i = 0; i < pTokens.length; i += 2) {
+    molarMass += elements[pTokens[i]].molarMass * pTokens[i + 1];
+  }
+  return Math.round(molarMass * 1000) / 1000;
 }
